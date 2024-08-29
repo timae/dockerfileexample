@@ -21,7 +21,7 @@ COPY --from=builder /usr/src/app /srv
 COPY Caddyfile /etc/caddy/Caddyfile
 
 # Expose the default HTTP port
-EXPOSE 80
+EXPOSE 8080
 
 # Start the Caddy server
 CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
