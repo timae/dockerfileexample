@@ -1,18 +1,27 @@
-# Use an official Node.js runtime as the base image
-FROM node:14-alpine
+# Use the official Node.js image as the base image
+FROM node:14-alpine AS builder
 
-# Set the working directory in the container
+# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package.json and install dependencies in a single step to optimize layers
+# Copy package.json and install dependencies
 COPY package*.json ./
-RUN npm install && npm cache clean --force
+RUN npm install --production && npm cache clean --force
 
 # Copy the rest of the application code
 COPY . .
 
-# Expose the port required by the application
-EXPOSE 3000
+# Use the official Caddy image for production
+FROM caddy:alpine
 
-# Start the application using npm
-CMD ["npm", "start"]
+# Copy the Node.js app from the builder stage
+COPY --from=builder /usr/src/app /srv
+
+# Copy the Caddyfile for reverse proxy configuration
+COPY Caddyfile /etc/caddy/Caddyfile
+
+# Expose the default HTTP port
+EXPOSE 80
+
+# Start the Caddy server
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
