@@ -5,8 +5,8 @@ const port = 3000;
 // Serve a dynamic webpage
 app.get('/', (req, res) => {
   res.send(`
-    <h1>Welcome to My Dynamic Website</h1>
-    <p>This content is served dynamically using Node.js and Express.</p>
+    <h1>Welcome to My Dynamic Website with Caddy</h1>
+    <p>This content is served dynamically using Node.js and Express, proxied by Caddy.</p>
     <form action="/submit" method="POST">
       <label for="name">Enter your name: </label>
       <input type="text" id="name" name="name" required>
