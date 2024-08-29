@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8080;
+const port = 80;
 
 // Serve a dynamic webpage
 app.get('/', (req, res) => {
