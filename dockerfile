@@ -1,14 +1,20 @@
-# Use the official Nginx image as the base image
-FROM nginx:alpine
+# Use the official Node.js image as the base image
+FROM node:14
 
-# Set the working directory
-WORKDIR /usr/share/nginx/html
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Copy your static website files into the container
-COPY ./index.html .
+# Copy package.json and package-lock.json to install dependencies
+COPY package*.json ./
 
-# Expose port 80 to make the website accessible
-EXPOSE 80
+# Install Node.js dependencies
+RUN npm install
 
-# Start Nginx when the container starts
-CMD ["nginx", "-g", "daemon off;"]
+# Copy the rest of the application files
+COPY . .
+
+# Expose the application port
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "start"]
