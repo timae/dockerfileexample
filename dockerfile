@@ -14,8 +14,8 @@ COPY . .
 # Use the official Caddy image for production
 FROM caddy:alpine
 
-# Install Forego (a process manager to run both Caddy and Node.js)
-RUN apk add --no-cache forego
+# Install supervisord to run multiple services
+RUN apk add --no-cache supervisor
 
 # Copy the Node.js app from the builder stage
 COPY --from=builder /usr/src/app /srv
@@ -23,15 +23,14 @@ COPY --from=builder /usr/src/app /srv
 # Copy the Caddyfile for reverse proxy configuration
 COPY Caddyfile /etc/caddy/Caddyfile
 
-# Create a Procfile to tell Forego which processes to run
-RUN echo "web: npm start" > /srv/Procfile
-RUN echo "proxy: caddy run --config /etc/caddy/Caddyfile" >> /srv/Procfile
-
-# Set the working directory to /srv where the app is located
-WORKDIR /srv
+# Copy the supervisord configuration file
+COPY supervisord.conf /etc/supervisord.conf
 
 # Expose the default HTTP port
 EXPOSE 8080
 
-# Run Forego to start both Node.js and Caddy
-CMD ["forego", "start", "-f", "/srv/Procfile"]
+# Set the working directory to /srv where the app is located
+WORKDIR /srv
+
+# Start supervisord, which will manage both Caddy and Node.js
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]
