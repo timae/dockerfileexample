@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 80;
+const port = process.env.PORT || 3000; // Default to 3000 if PORT is not set
 
 // Serve a dynamic webpage
 app.get('/', (req, res) => {
